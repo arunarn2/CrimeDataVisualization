@@ -9,7 +9,17 @@
         stroke: #f89e35;
         stroke-width: 2px;
     }
-    
+    #navlist li
+{
+    font-size: 15px; 
+    font-family: Helvetica, sans-serif; 
+	display: inline;
+	font-weight: bold;
+	list-style-type: none;
+	border-radius: 5px;
+	color:#fff;
+	background-color: #bdbdbd;
+}
     .line2 {
         fill: none;
         stroke: #fd0d0d;
@@ -48,6 +58,7 @@
 </style>
 
 <body>
+<h3>Median Victim/Perpetrator Age (1994-2004)</h3>
     <!-- load the d3.js library -->
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script>
@@ -197,4 +208,18 @@
 
         });
     </script>
+	
+	<h3>
+<br><br>
+<div id="navcontainer">
+<ul id="navlist">
+<li id="active"><li><a href="index.php">Crime Data in US</a></li>
+<li><a href="CrimeByRace.html">Crime By Race</a></li>
+<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
+<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
+<li><a href="VictimPerpAge.html">Victim Perpitrator Age</a></li>
+<li><a href="CrimeByState.html">Totals By Crime Type</a></li>
+</ul>
+</div>
+</h3>
 </body>

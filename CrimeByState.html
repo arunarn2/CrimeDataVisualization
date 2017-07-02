@@ -6,6 +6,17 @@ body {
 	font: 11px sans-serif;
 	background-color: #ffffff;
 }
+#navlist li
+{
+    font-size: 15px; 
+    font-family: Helvetica, sans-serif; 
+	display: inline;
+	font-weight: bold;
+	list-style-type: none;
+	border-radius: 5px;
+	color:#fff;
+	background-color: #bdbdbd;
+}
 
 
 /* stylesheet for your custom graph */
@@ -59,7 +70,7 @@ body {
 }
 
 </style>
-
+<h3>Most Dangerous Cities (1994-2004)</h3>
 <div id="selectors"></div>
 <div id="tooltip-container"></div>
 <div id="canvas-svg"></div>
@@ -70,7 +81,9 @@ body {
 <script type="text/javascript">
 
 </script>
+</body>
 <script>
+
 
 d3.csv("CrimeByState.csv", function(err, data) {
 
@@ -344,3 +357,17 @@ d3.csv("CrimeByState.csv", function(err, data) {
 });
 
 </script>
+<h3>
+<br><br>
+<div id="navcontainer">
+<ul id="navlist">
+<li id="active"><li><a href="index.php">Crime Data in US</a></li>
+<li><a href="CrimeByRace.html">Crime By Race</a></li>
+<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
+<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
+<li><a href="VictimPerpAge.html">Victim Perpitrator Age</a></li>
+<li><a href="CrimeByState.html">Totals By Crime Type</a></li>
+</ul>
+</div>
+</h3>
+</body>
