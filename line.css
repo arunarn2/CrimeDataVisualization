@@ -1,0 +1,114 @@
+.graphWrapper {
+    max-width: 900px;
+    min-width: 304px;
+    margin: 0 auto;
+}
+
+.graphWrapper .inner-wrapper {
+    position: relative;
+    padding-bottom: 50%;
+    width: 100%;
+}
+#navlist li
+{
+	font-size: 15px; 
+	font-family: Helvetica, sans-serif; 
+	display: inline;
+	font-weight: bold;
+	list-style-type: none;
+	border-radius: 5px;
+	color:#fff;
+	background-color: #bdbdbd;
+	height = 40px;
+}
+.graphWrapper .outer-box {
+    position: absolute;
+    top: 0; bottom: 0; left: 0; right: 0;
+}
+
+.graphWrapper .inner-box {
+    width: 100%;
+    height: 100%;
+}
+
+.graphWrapper text {
+  font-family: sans-serif;
+  font-size: 11px;
+}
+
+.graphWrapper p {
+    font-size: 16px;
+    margin-top:5px;
+    margin-bottom: 40px;
+}
+
+.graphWrapper .axis path,
+.graphWrapper .axis line {
+    fill: none;
+    stroke: #1F1F2E;
+    stroke-opacity: 0.7;
+    shape-rendering: crispEdges;
+}
+.graphWrapper .axis path {
+  stroke-width: 2px;
+}
+
+.graphWrapper .line {
+  fill: none;
+  stroke-width: 2px;
+}
+
+.graphWrapper .legend  {
+    min-width: 200px;
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    font-size: 16px;
+    padding: 10px 40px;
+}
+.graphWrapper .legend > div {
+    margin: 0px 25px 10px 0px;
+    flex-grow: 0;
+}
+.graphWrapper .legend p {
+    display:inline;
+    font-size: 1.0em;
+    font-family: sans-serif;
+    font-weight: 600;
+}
+.graphWrapper .legend .series-marker {
+    height: 1em;
+    width: 1em;
+    border-radius: 35%;
+    background-color: black;
+    display: inline-block;
+    margin-right: 4px;
+    margin-bottom: -0.16rem;	
+}
+
+.graphWrapper .overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.graphWrapper .focus circle {
+  fill: black;
+  stroke: black;
+  stroke-width: 2px;
+  fill-opacity: 15%;
+}
+.graphWrapper .focus rect {
+    fill: white;
+    opacity: 0.4;
+    border-radius: 2px;
+}
+.graphWrapper .focus.line {
+    stroke: grey;
+    stroke-dasharray: 4,5;
+    stroke-width: 3;
+    opacity: 0.5;
+}
+@media (max-width:500px){
+    .graphWrapper .line {stroke-width: 3px;}
+    .graphWrapper .legend {font-size: 14px;}
+}

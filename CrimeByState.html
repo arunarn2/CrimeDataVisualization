@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<head>
+	<h2 id = "title" >Crime Distribution (1994-2004)</h2>
+	<link rel="stylesheet" type="text/css" href="line.css">
+</head>
 <style>
 
 body {
@@ -8,8 +12,8 @@ body {
 }
 #navlist li
 {
-    font-size: 15px; 
-    font-family: Helvetica, sans-serif; 
+    font-size: 15px;
+    font-family: Helvetica, sans-serif;
 	display: inline;
 	font-weight: bold;
 	list-style-type: none;
@@ -32,8 +36,8 @@ body {
 }
 
 .legend {
-	position:absolute;
-	left:700px;
+	position:fixed;
+	right:100px;
 	top:330px;
 	font: 8px sans-serif;
 	font-weight: bold;
@@ -44,9 +48,9 @@ body {
 	background-color: #fff;
 	color: #000;
 	padding: 10px;
-	font: 13px sans-serif;        
-	background: white;   
-	border: 0px;      
+	font: 13px sans-serif;
+	background: white;
+	border: 0px;
 	border-radius: 5px;
 	display: none;
 }
@@ -68,12 +72,19 @@ body {
   padding: 5px;
   font-weight: bold;
 }
+body {
+	font: 11px sans-serif;
+	background-color: #ffffff;
+	text-align: center;
+}
 
 </style>
-<h3>Most Dangerous Cities (1994-2004)</h3>
+<div class="graphWrapper" id="graphLine"></div>
 <div id="selectors"></div>
 <div id="tooltip-container"></div>
-<div id="canvas-svg"></div>
+<div id="canvas-svg">
+	<div id="leg"> </div>
+</div>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://unpkg.com/topojson-client@3"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.1.0/topojson.min.js"></script>
@@ -82,24 +93,25 @@ body {
 
 </script>
 </body>
+
 <script>
 
 
 d3.csv("CrimeByState.csv", function(err, data) {
 
   var config = {"color1":"#d3e5ff","color2":"#08306B","stateDataColumn":"State",
-				"defaultValue":"TotalCountOfIncidents","state":"State"}; 
-  var WIDTH = 960, HEIGHT = 500;
-  var COLOR_COUNTS = 50; 
-  var SCALE = 0.8;
-  
+				"defaultValue":"TotalCountOfIncidents","state":"State"};
+	var WIDTH = 1200, HEIGHT = 600;
+	var COLOR_COUNTS = 50;
+	var SCALE = 0.9;
+
   function Interpolate(start, end, steps, count) {
       var s = start,
           e = end,
           final = s + (((e - s) / steps) * count);
       return Math.floor(final);
   }
-  
+
   function Color(_r, _g, _b) {
       var r, g, b;
       var setColors = function(_r, _g, _b) {
@@ -107,7 +119,7 @@ d3.csv("CrimeByState.csv", function(err, data) {
           g = _g;
           b = _b;
       };
-  
+
       setColors(_r, _g, _b);
       this.getColors = function() {
           var colors = {
@@ -118,7 +130,7 @@ d3.csv("CrimeByState.csv", function(err, data) {
           return colors;
       };
   }
-  
+
   function hexToRgb(hex) {
       var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
       return result ? {
@@ -127,7 +139,7 @@ d3.csv("CrimeByState.csv", function(err, data) {
           b: parseInt(result[3], 16)
       } : null;
   }
-  
+
   function valueFormat(d) {
     if (d > 1000000000) {
       return Math.round(d / 1000000000 * 10) / 10 + "B";
@@ -139,7 +151,7 @@ d3.csv("CrimeByState.csv", function(err, data) {
       return d;
     }
   }
-  
+
   var fields = Object.keys(data[0]);
   var option_select = d3.select('#selectors').append("select")
       .attr("class", "option-select");
@@ -148,63 +160,63 @@ d3.csv("CrimeByState.csv", function(err, data) {
       var opt = option_select.append("option")
         .attr("value", fields[i])
         .text(fields[i]);
-      
+
       if (fields[i] === config.defaultValue) {
         opt.attr("selected", "true");
       }
     }
   }
-  
-  var COLOR_FIRST = config.color1, COLOR_LAST = config.color2; 
+
+  var COLOR_FIRST = config.color1, COLOR_LAST = config.color2;
   var rgb = hexToRgb(COLOR_FIRST);
   var COLOR_START = new Color(rgb.r, rgb.g, rgb.b);
-  
+
   rgb = hexToRgb(COLOR_LAST);
   var COLOR_END = new Color(rgb.r, rgb.g, rgb.b);
-  
+
   var width = WIDTH,
       height = HEIGHT;
-  
+
   var startColors = COLOR_START.getColors(),
       endColors = COLOR_END.getColors();
-  
+
   var colors = [];
-  
+
   for (var i = 0; i < COLOR_COUNTS; i++) {
     var r = Interpolate(startColors.r, endColors.r, COLOR_COUNTS, i);
     var g = Interpolate(startColors.g, endColors.g, COLOR_COUNTS, i);
     var b = Interpolate(startColors.b, endColors.b, COLOR_COUNTS, i);
     colors.push(new Color(r, g, b));
   }
-  
+
   var quantize = d3.scaleQuantize()
       .domain([0, 1.0])
       .range(d3.range(COLOR_COUNTS).map(function(i) { return i }));
-  
+
   var path = d3.geoPath();
-  
+
   var svg = d3.select("#canvas-svg").append("svg")
       .attr("width", width)
       .attr("height", height);
-  
+
   d3.tsv("us-state-names.tsv", function(error, names) {
   d3.json("https://unpkg.com/us-atlas@1/us/10m.json", function(error, us) {
-    
+
     var name_id_map = {};
     var id_name_map = {};
-    
+
     for (var i = 0; i < names.length; i++) {
       name_id_map[names[i].name] = names[i].id;
       id_name_map[names[i].id] = names[i].name;
     }
-    
+
     var dataMap = {};
-    
+
     data.forEach(function(d) {
       if (!dataMap[d[config.state]]) {
         dataMap[d[config.state]] = {};
       }
-      
+
       for (var i = 0; i < Object.keys(data[0]).length; i++) {
         if (Object.keys(data[0])[i] !== config.state) {
           dataMap[d[config.state]][Object.keys(data[0])[i]] =
@@ -212,19 +224,19 @@ d3.csv("CrimeByState.csv", function(err, data) {
         }
       }
     });
-    
+
     function drawMap(dataColumn) {
       var valueById = d3.map();
-      
+
       data.forEach(function(d) {
         var id = name_id_map[d[config.state]];
-        valueById.set(id, +d[dataColumn]); 
+        valueById.set(id, +d[dataColumn]);
       });
-      
+
       quantize.domain([
 		d3.min(data, function(d){ return +d[dataColumn] }),
         d3.max(data, function(d){ return +d[dataColumn] })]);
-    
+
       svg.append("g")
           .attr("class", "states-choropleth")
         .selectAll("path")
@@ -242,13 +254,13 @@ d3.csv("CrimeByState.csv", function(err, data) {
           })
           .attr("d", path)
           .on("mousemove", function(d) {
-              var html = "";   
+              var html = "";
               html += "<div class=\"tooltip_kv\">";
               html += "<span class=\"tooltip_key\">";
               html += id_name_map[d.id];
               html += "</span>";
               html += "</div>";
-              
+
               for (var i = 1; i < Object.keys(data[0]).length; i++) {
                 html += "<div class=\"tooltip_kv\">";
                 html += "<span class='tooltip_key'>";
@@ -260,15 +272,15 @@ d3.csv("CrimeByState.csv", function(err, data) {
                 html += "</span>";
                 html += "</div>";
               }
-              
+
               $("#tooltip-container").html(html);
               $(this).attr("fill-opacity", "0.7");
               $("#tooltip-container").show();
-              
+
               var coordinates = d3.mouse(this);
-              
+
               var map_width = $('.states-choropleth')[0].getBoundingClientRect().width;
-              
+
               if (d3.event.layerX < map_width / 2) {
                 d3.select("#tooltip-container")
                   .style("top", (d3.event.layerY + 15) + "px")
@@ -284,16 +296,16 @@ d3.csv("CrimeByState.csv", function(err, data) {
                   $(this).attr("fill-opacity", "1.0");
                   $("#tooltip-container").hide();
               });
-    
+
       svg.append("path")
           .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
           .attr("class", "states")
           .attr("transform", "scale(" + SCALE + ")")
           .attr("d", path);
     }
-    
+
     drawMap(config.defaultValue);
-    
+
     option_select.on("change", function() {
 		drawMap($("#selectors").find(".option-select").val());
     });
@@ -305,11 +317,11 @@ d3.csv("CrimeByState.csv", function(err, data) {
 	var minVal = d3.min(dataArray)
 	var maxVal = d3.max(dataArray)
 	var ramp = d3.scaleLinear().domain([minVal,maxVal]).range([lowColor,highColor])
-	
+
 	var lowColor = '#deebf7'
 	var highColor = '#08306b'
 		var w = 100, h = 240;
-		var key = d3.select("body")
+		var key = d3.select("#leg")
 			.append("svg")
 			.attr("width", w)
 			.attr("height", h)
@@ -329,7 +341,7 @@ d3.csv("CrimeByState.csv", function(err, data) {
 			.attr("offset", "0%")
 			.attr("stop-color", highColor)
 			.attr("stop-opacity", 1);
-			
+
 		legend.append("stop")
 			.attr("offset", "100%")
 			.attr("stop-color", lowColor)
@@ -351,23 +363,25 @@ d3.csv("CrimeByState.csv", function(err, data) {
 			.attr("class", "y axis")
 			.attr("transform", "translate(20,10)")
 			.call(yAxis)
-  
+
   });
   });
 });
 
 </script>
+<h4> Use the drop down to select type of crime and mouse over to see the totals during the period for each state.</h4>
 <h3>
-<br><br>
+<br>
 <div id="navcontainer">
 <ul id="navlist">
 <li id="active"><li><a href="index.php">Crime Data in US</a></li>
-<li><a href="CrimeByRace.html">Crime By Race</a></li>
-<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
-<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
-<li><a href="VictimPerpAge.html">Victim Perpitrator Age</a></li>
 <li><a href="CrimeByState.html">Totals By Crime Type</a></li>
+<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
+<li><a href="CrimeByRace.html">Crime By Race</a></li>
+<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
+<li><a href="VictimPerpAge.html">Victim Perpetrator Age</a></li>
 </ul>
 </div>
 </h3>
 </body>
+</html>

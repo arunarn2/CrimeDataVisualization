@@ -1,354 +1,49 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<style>
-
-    /* set the CSS */
-    
-    .line {
-        fill: none;
-        /*stroke: #aaa;
-        stroke: #43484c;
-        stroke: #405275;
-        stroke: rgba(40, 53, 79, .95);
-        stroke: #161719;
-        stroke: #f99e1a;*/
-        stroke: #f89e35;
-        stroke-width: 2px;
-    }
-	#navlist li
-{
-    font-size: 15px; 
-    font-family: Helvetica, sans-serif; 
-	display: inline;
-	font-weight: bold;
-	list-style-type: none;
-	border-radius: 5px;
-	color:#fff;
-	background-color: #bdbdbd;
-}
-    
-    .line2 {
-        fill: none;
-        stroke: #aaa;
-        stroke-width: 2px;
-    }
-    
-    .line3 {
-        fill: none;
-        stroke: #e34a33;
-        stroke-width: 2px;
-    }
-	
-	
-	.line3-text {
-        fill: #e34a33;
-        stroke: #e34a33;
-		
-    }
-	
-    
-    .line2-text {
-        fill: #aaa;
-        stroke: #aaa;
-    }
-    
-    .line-text {
-        fill: #f89e35;
-        stroke: #f89e35;
-    }
-	
-	.line4 {
-        fill: none;
-        stroke: #31a354;
-        stroke-width: 2px;
-    }
-    
-    .line5 {
-        fill: none;
-        stroke: #405275;
-        stroke-width: 2px;
-    }
-    
-    .line4-text {
-        fill: #31a354;
-        stroke: #31a354;
-    }
-    
-    .line5-text {
-        fill: #405275;
-        stroke: #405275;
-    }
-    
-    div.tooltip {
-        position: absolute;
-        text-align: center;
-        padding: 5px;
-        font-size: 12px;
-        font-weight: bold;
-        background: #f99e1a;
-        border: 0px;
-        border-radius: 8px;
-    }
-    
-    .tooltip p {
-        margin: 0;
-        padding: 0;
-    }
-    
-    circle {
-        fill: rgba(50, 63, 79, .95);
-    }
-</style>
-
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<h2 id = "title" align="center"> Crime By Race (1994-2004)</h2>
+    <link rel="stylesheet" type="text/css" href="line.css">
+    <script src="http://d3js.org/d3.v3.js" charset="utf-8"></script>
+</head>
 <body>
-<h3>Crime By Race(1994-2004)</h3>
-    <!-- load the d3.js library -->
-    <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script>
-        // set the dimensions and margins of the graph
-        var margin = {
-                top: 20,
-                right: 20,
-                bottom: 30,
-                left: 50
-            },
-            width = 800 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
+<div class="graphWrapper" id="graphLine"></div>
 
-        // set the ranges
-        var x = d3.scaleLinear().range([0, width]);
-        var y = d3.scaleLinear().range([height, 0]);
+<script type="text/javascript">
+    d3.csv('CrimeByRace.csv', function(error, data) {
+    data.forEach(function (d) {
+        d.year = +d.year;
+		d.White = +d.White;
+        d.AsianPacificIslander = +d.AsianPacificIslander;
+        d.Black = +d.Black;
+        d.NativeAmericanAlaskaNative = +d.NativeAmericanAlaskaNative;
+        d.Unknown = +d.Unknown;;
+    });
 
-        // define the line  
-        function basicy() {
-            var ret = d3.line()
-                .x(function (d) {
-                    return x(d.year);
-                })
-            return ret;
-        }
-        var valueline = basicy()
-            .y(function (d) {
-                return y(d.AsianPacificIslander);
-            });
-        var valueline2 = basicy()
-            .y(function (d) {
-                return y(d.Black);
-            });
-        var valueline3 = basicy()
-            .y(function (d) {
-                return y(d.NativeAmericanAlaskaNative);
-            });
-		var valueline4 = basicy()
-            .y(function (d) {
-                return y(d.Unknown);
-            });
-		var valueline5 = basicy()
-            .y(function (d) {
-                return y(d.White);
-            });
-        var div = d3.select("body").append("div")
-            .attr("class", "tooltip")
-            .style("opacity", 0);
+    var chart = drawLineGraph(data, 'year', {
+		'White': {column: 'White'},
+        'Asian Pacific Islander': {column: 'AsianPacificIslander'},
+        'Black': {column: 'Black'},
+        'NativeAmericanAlaskaNative': {column: 'NativeAmericanAlaskaNative'},
+        'Unknown': {column: 'Unknown'}
+    }, {xAxis: 'Years', yAxis: 'Race'});
+    chart.bind("#graphLine");
+    chart.render();
 
-        // append the svg object to the body of the page
-        // appends a 'group' element to 'svg'
-        // moves the 'group' element to the top left margin
-        var svg = d3.select("body").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-			.call(d3.zoom().on("zoom", function () {
-              svg.attr("transform", d3.event.transform)}))
-            .append("g")
-            .attr("transform",
-                "translate(" + margin.left + "," + margin.top + ")");
-
-        // Get the data
-        var datalist = [];
-        d3.csv("CrimeByRace.csv", function (error, data) {
-            if (error) throw error;
-            // scale the range of the data
-            x.domain(d3.extent(data, function (d) {
-                return d.year;
-            }));
-            y.domain([0, d3.max(data, function (d) {
-                return Math.max(d.AsianPacificIslander, d.Black, d.NativeAmericanAlaskaNative,
-							d.Unknown, d.White);
-            })]);
-
-            // add the valueline path.
-
-            var dataArray = [{
-                "name": "Asian/Pacific Islander",
-                "x": 100,
-                "y": 20,
-                "class": "line-text",
-                "class2": "line",
-                "dataline": valueline
-            }, {
-                "name": "Black",
-                "x": 100,
-                "y": 40,
-                "class": "line2-text",
-                "class2": "line2",
-                "dataline": valueline2
-            }, {
-                "name": "Native American/Alaska Native",
-                "x": 100,
-                "y": 60,
-                "class": "line3-text",
-                "class2": "line3",
-                "dataline": valueline3
-            }, {
-                "name": "Unknown",
-                "x": 100,
-                "y": 80,
-                "class": "line4-text",
-                "class2": "line4",
-                "dataline": valueline4
-            }, {
-                "name": "White",
-                "x": 100,
-                "y": 100,
-                "class": "line5-text",
-                "class2": "line5",
-                "dataline": valueline5
-            }]
-            for (var i = 0; i < dataArray.length; i++) {
-                svg.append("text").text(dataArray[i].name)
-                    .attr("x", dataArray[i].x)
-                    .attr("y", dataArray[i].y);
-                svg.append("rect")
-                    .attr("x", dataArray[i].x - 50)
-                    .attr("y", dataArray[i].y - 12)
-                    .attr("width", 50)
-                    .attr('height', 10)
-                    .attr('class', dataArray[i].class)
-                svg.append("path")
-                    .data([data])
-                    .attr("class", dataArray[i].class2)
-                    .attr("d", dataArray[i].dataline) 
-            }
-
-            // add the dots with tooltips
-            var fixeddot = svg.selectAll("dot")
-                .data(data)
-                .enter().append("circle")
-                .attr("r", 3)
-            var fixeddot2 = svg.selectAll("dot")
-                .data(data)
-                .enter().append("circle")
-                .attr("r", 3)
-            var fixeddot3 = svg.selectAll("dot")
-                .data(data)
-                .enter().append("circle")
-                .attr("r", 3)
-			var fixeddot4 = svg.selectAll("dot")
-                .data(data)
-                .enter().append("circle")
-                .attr("r", 3)
-            var fixeddot5 = svg.selectAll("dot")
-                .data(data)
-                .enter().append("circle")
-                .attr("r", 3)
-
-            fixeddot.attr("cx", function (d) {
-                    return x(d.year);
-                })
-                .attr("cy", function (d) {
-                    return y(d.AsianPacificIslander);
-                })
-                .on("mouseover", function (d) {
-                    div.transition()
-                        .duration(20)
-                        .style("opacity", .5);
-                    div.html("<p>" + d.year + "</p> <p>Asian/Pacific Islander:" + d.AsianPacificIslander + "</p>")
-                        .style("left", (d3.event.pageX) + "px")
-                        .style("top", (d3.event.pageY - 28) + "px");
-                });
-
-            fixeddot2.attr("cx", function (d) {
-                    return x(d.year);
-                })
-                .attr("cy", function (d) {
-                    return y(d.Black);
-                })
-                .on("mouseover", function (d) {
-                    div.transition()
-                        .duration(20)
-                        .style("opacity", .9);
-                    div.html("<p>" + d.year + "</p> <p>Black:" + d.Black + "</p>")
-                        .style("left", (d3.event.pageX) + "px")
-                        .style("top", (d3.event.pageY - 28) + "px");
-                });
-            fixeddot3.attr("cx", function (d) {
-                    return x(d.year);
-                })
-                .attr("cy", function (d) {
-                    return y(d.NativeAmericanAlaskaNative);
-                })
-                .on("mouseover", function (d) {
-                    div.transition()
-                        .duration(20)
-                        .style("opacity", .9);
-                    div.html("<p>" + d.year + "</p> <p>Native American/Alaska Native:" + d.NativeAmericanAlaskaNative + "</p>")
-                        .style("left", (d3.event.pageX) + "px")
-                        .style("top", (d3.event.pageY - 28) + "px");
-                });
-			fixeddot4.attr("cx", function (d) {
-                    return x(d.year);
-                })
-                .attr("cy", function (d) {
-                    return y(d.Unknown);
-                })
-                .on("mouseover", function (d) {
-                    div.transition()
-                        .duration(20)
-                        .style("opacity", .9);
-                    div.html("<p>" + d.year + "</p> <p>Unknown Race:" + d.Unknown + "</p>")
-                        .style("left", (d3.event.pageX) + "px")
-                        .style("top", (d3.event.pageY - 28) + "px");
-                });
-			fixeddot5.attr("cx", function (d) {
-                    return x(d.year);
-                })
-                .attr("cy", function (d) {
-                    return y(d.White);
-                })
-                .on("mouseover", function (d) {
-                    div.transition()
-                        .duration(20)
-                        .style("opacity", .9);
-                    div.html("<p>" + d.year + "</p> <p>White:" + d.White + "</p>")
-                        .style("left", (d3.event.pageX) + "px")
-                        .style("top", (d3.event.pageY - 28) + "px");
-                });
-				
-				
-
-            // add the X Axis
-            svg.append("g")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x).tickFormat(d3.format("d")));
-
-            // add the Y Axis
-            svg.append("g")
-                .call(d3.axisLeft(y).tickFormat(function(d){return d/10000 + " K"}));
-
-        });
-    </script>
-	
-	<h3>
-<br><br>
+});
+</script>
+<script src="line.js" charset="utf-8"></script>
+<h3 id = "bottomMenu" align = "center">
 <div id="navcontainer">
 <ul id="navlist">
 <li id="active"><li><a href="index.php">Crime Data in US</a></li>
-<li><a href="CrimeByRace.html">Crime By Race</a></li>
-<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
-<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
-<li><a href="VictimPerpAge.html">Victim Perpitrator Age</a></li>
 <li><a href="CrimeByState.html">Totals By Crime Type</a></li>
+<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
+<li><a href="CrimeByRace.html">Crime By Race</a></li>
+<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
+<li><a href="VictimPerpAge.html">Victim Perpetrator Age</a></li>
 </ul>
 </div>
 </h3>
 </body>
+</html>
