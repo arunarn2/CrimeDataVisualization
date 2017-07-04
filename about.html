@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<style>
+#main {
+  width: 950px;
+  margin:0 auto;
+  text-align: left;
+}
+</style>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+	<h2 id = "title" align="center">About the Visualization</h2>
+		<br><br>
+		<link rel="stylesheet" type="text/css" href="line.css">
+		<h3 id = "bottomMenu" align = "center">
+	<div id="navcontainer">
+	<ul id="navlist">
+	<li id="active"><li><a href="index.php">Crime Data in US</a></li>
+	<li><a href="CrimeByState.html">Percentages By Crime Type</a></li>
+	<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
+	<li><a href="CrimeByRace.html">Crime By Race</a></li>
+	<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
+	<li><a href="VictimPerpAge.html">Victim Perpetrator Age</a></li>
+	<li><a href="CrimeSolved.html">Crime Solved By Agency</a></li>
+	</ul>
+	</div>
+	</h3><br>
+
+    <script src="https://d3js.org/d3.v3.js" charset="utf-8"></script>
+	<script src="line.js" charset="utf-8"></script>
+</head>
+
+<body>
+<div id ="main" >
+<h3>STRUCTURE OF THE VISUALIZATION</h3>
+<h4>
+I have implemented a Martini Glass Structure visualization for the Crime Data that I downloaded from the <a href="https://ucr.fbi.gov/"> FBI’s Uniform Crime Reporting site</a>, following a tight narrative path early on (the stem of the glass) and then opening up later for free exploration (the body of the glass). This form of story telling is concrete and analytical, and it’s the simplest way to present data to the reader allowing them to make informed decisions. 
+
+
+</h4>
+<h3>SCENES</h3>
+<h4>
+This visualization presents an overall picture of the crime data on the US Map for the Total Incident Reports as the default for the year 1994. The buttons on the top help navigate through the different scenes presenting the data in different forms like showing details on Crime by Type as a percent of the population for each state, Crime Vs. Weapon used, Crime Vs. Race, Crime Vs. Age, Ratio of Crimes Solved by each agency etc. 
+<br><br>
+The Year Slider on the top right corner presents different scenes for each year between 1994 and 2014 for each state. 
+<br><br>
+The Crime Type Buttons on left hand side present another view of scenes for each type of crime (Murder, Robbery, Larceny, Motor Vehicle Theft, Property Crimes etc). In each of these cases the slider can be use to get numbers for each year again presenting different scenes.
+</h4>
+<h3>ANNOTATIONS</h3>
+<h4>
+ToolTip on mouseover for each state provide Total Count of Crime for the chosen parameters (Year and Crime Type). Additional is presented at the bottom of the page showing the source of the data and the key questions that this visualizations is trying to answer. The annotation help display the particular aspect of data that is in the particular scene presenting the user with the details on demand. There is annotation at the bottom of each scene with information relevant to the scene that helps the user navigate the data in the scene to arrive at conclusions. Annotations in the form of legends are also posted on each scene.
+</h4>
+<h3>PARAMETERS</<h3>
+<h4>The slider on the top left of scene 1 presents the user with parameter settings to move the scenes through each year. The Dropdown button on scene 2 is another parameter that takes the input of Crime Type and presents the percentages for each state as an on-demand tooltip annotation. These parameters become the variables of the narrative.
+</h4>
+<h3>TRIGGERS</h3>
+<h4>Triggers act as a connection between the parameters, when one parameter changes it causes to another to update. Crime Type Button Navigator with the Year Slider on scene 1 serves as trigger. Any time when you click on any button the Years slider gets reset to 1994 (Title of the page updated to reflect the change in Scene as well). Also when you switch to other scenes on the visualization the year parameter gets disabled. </h4>
+
+<br><br>
+<h3>MIDTERM PROJECT<h3>
+<h4>Here is my visualization from the MidTerm Project which I have mostly tried to replicate using JavaScript and D3 </h4> <br>
+
+<div class='tableauPlaceholder' id='viz1499145012981' style='position: relative'><noscript><a href='#'><img alt=' ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Cr&#47;CrimeDataUS-Aruna_0&#47;Dashboard&#47;1_rss.png' style='border: none' /></a></noscript><object class='tableauViz'  style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> <param name='site_root' value='' /><param name='name' value='CrimeDataUS-Aruna_0&#47;Dashboard' /><param name='tabs' value='yes' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Cr&#47;CrimeDataUS-Aruna_0&#47;Dashboard&#47;1.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /><param name='filter' value='publish=yes' /></object></div>                <script type='text/javascript'>                    var divElement = document.getElementById('viz1499145012981');                    var vizElement = divElement.getElementsByTagName('object')[0];                    vizElement.style.width='100%';vizElement.style.height=(divElement.offsetWidth*0.75)+'px';                    var scriptElement = document.createElement('script');                    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';                    vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>
+
+</div>
+<br><br>
+
+</body>
+</html>

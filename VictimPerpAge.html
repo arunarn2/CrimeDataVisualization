@@ -2,9 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-	<h2 id = "title" align="center">Median Victim & Perpitrator Age (1994-2004)</h2>
+	<h1 id = "title" align="center">Median Victim & Perpetrator Age (1994-2014)</h1>
+		<br><br>
     <link rel="stylesheet" type="text/css" href="line.css">
-    <script src="http://d3js.org/d3.v3.js" charset="utf-8"></script>
+	<h3 id = "bottomMenu" align = "center">
+<div id="navcontainer">
+<ul id="navlist">
+<li id="active"><li><a href="index.php">Crime Data in US</a></li>
+<li><a href="CrimeByState.html">Percentages By Crime Type</a></li>
+<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
+<li><a href="CrimeByRace.html">Crime By Race</a></li>
+<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
+<li><a href="VictimPerpAge.html">Victim Perpetrator Age</a></li>
+<li><a href="CrimeSolved.html">Crime Solved By Agency</a></li>
+</ul>
+</div>
+</h3><br>
+
+    <script src="https://d3js.org/d3.v3.js" charset="utf-8"></script>
+	<script src="line.js" charset="utf-8"></script>
 </head>
 <body>
 <div class="graphWrapper" id="graphLine"></div>
@@ -27,18 +43,7 @@
 
 });
 </script>
-<script src="line.js" charset="utf-8"></script>
-<h3 id = "bottomMenu" align = "center">
-<div id="navcontainer">
-<ul id="navlist">
-<li id="active"><li><a href="index.php">Crime Data in US</a></li>
-<li><a href="CrimeByState.html">Totals By Crime Type</a></li>
-<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
-<li><a href="CrimeByRace.html">Crime By Race</a></li>
-<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
-<li><a href="VictimPerpAge.html">Victim Perpetrator Age</a></li>
-</ul>
-</div>
-</h3>
+<h4 align = "justify">What has caused the median age of both perpetrators and victim to increase?</h4>
+
 </body>
 </html>

@@ -1,40 +1,52 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<h1 id = "title" align="center">Crime Distribution By Weapon (1994-2014)</h1>
+		<br><br>
+		<link rel="stylesheet" type="text/css" href="line.css">
+		<h3 id = "bottomMenu" align = "center">
+	<div id="navcontainer">
+	<ul id="navlist">
+	<li id="active"><li><a href="index.php">Crime Data in US</a></li>
+	<li><a href="CrimeByState.html">Percentages By Crime Type</a></li>
+	<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
+	<li><a href="CrimeByRace.html">Crime By Race</a></li>
+	<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
+	<li><a href="VictimPerpAge.html">Victim Perpetrator Age</a></li>
+	<li><a href="CrimeSolved.html">Crime Solved By Agency</a></li>
+	</ul>
+	</div>
+	</h3><br>
+
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+	<script src="line.js" charset="utf-8"></script>
+</head>
+<body>
+<svg width="900" height="600" text-anchor="middle"></svg>
+
+
 <style>
 body {
-	font: 11px sans-serif;
+
 	background-color: #ffffff;
 	text-align: center;
+	margin: 0 auto;
 }
 div.tooltip {
         position: absolute;
         text-align: center;
         padding: 5px;
-        font-size: 12px;
-        font-weight: bold;
         background: #f99e1a;
         border-radius: 20px;
+
     }
-	#navlist li
-{
-    font-size: 15px;
-    font-family: Helvetica, sans-serif;
-	display: inline;
-	font-weight: bold;
-	list-style-type: none;
-	border-radius: 5px;
-	color:#fff;
-	background-color: #bdbdbd;
-}
+
 </style>
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<body>
-<h3>Crime By Weapon (1994-2004)</h3>
-<svg width="900" height="500" font-family="sans-serif" font-size="10" text-anchor="middle"></svg>
+
 <script>
 
-var margin = {
-                top: 10,
+var margin = {top: 10,
                 right: 30,
                 bottom: 20,
                 left: 30
@@ -55,7 +67,7 @@ var color = d3.scaleOrdinal(d3.schemeCategory20c);
 
 var pack = d3.pack()
     .size([width, height])
-    .padding(2.5);
+    .padding(3.5);
 
 d3.csv("CrimeByWeapon.csv", function(d) {
   d.Deaths = +d.Deaths;
@@ -106,23 +118,15 @@ d3.csv("CrimeByWeapon.csv", function(d) {
 
   node.append("text")
       .text(function(d) { return d.id; })
-
-
 });
 
 </script>
-<h3>
-<br>
-<div id="navcontainer">
-<ul id="navlist">
-<li id="active"><li><a href="index.php">Crime Data in US</a></li>
-<li><a href="CrimeByState.html">Totals By Crime Type</a></li>
-<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
-<li><a href="CrimeByRace.html">Crime By Race</a></li>
-<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
-<li><a href="VictimPerpAge.html">Victim Perpetrator Age</a></li>
-</ul>
-</div>
-</h3>
+<h4 align="justify">
+Are we  in this current situation because of all our attempts to protect the Second Amendment?
+</h4>
+<h4 align="justify">
+Gun control debate has been something that split the nation but there is enough data that can help us put some additional checkpoints. </h4>
+<h4 align="justify">Given these results would be make sense to have additional regulations on Gun control and increase back ground checks. Can we put additional safety measures here?</h4>
+</h4>
 </body>
 </html>

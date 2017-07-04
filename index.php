@@ -1,12 +1,34 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <html>
+<head>
+    <meta charset="UTF-8">
+	<br>
+    <link rel="stylesheet" type="text/css" href="line.css">
+		<h3 id = "bottomMenu" align = "center">
+			<div id="navcontainer">
+			<ul id="navlist">
+				<li id="active"><li><a href="index.php">Crime Data in US</a></li>
+				<li><a href="CrimeByState.html">Percentages By Crime Type</a></li>
+				<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
+				<li><a href="CrimeByRace.html">Crime By Race</a></li>
+				<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
+				<li><a href="VictimPerpAge.html">Victim Perpetrator Age</a></li>
+				<li><a href="CrimeSolved.html">Crime Solved By Agency</a></li>
+			</ul>
+			</div>
+		</h3>
+    <script src="https://d3js.org/d3.v3.js" charset="utf-8"></script>
+	<script src="line.js" charset="utf-8"></script>
+	<br>
+</head>
 <style>
-
 body {
-	font: 11px sans-serif;
+
 	background-color: #ffffff;
-	;
+	max-width: 900px;
+    min-width: 304px;
+    margin: 0 auto;
 }
 .centered {
     text-align: center;
@@ -14,10 +36,7 @@ body {
 
 #navlist li
 {
-    font-size: 15px;
-    font-family: Helvetica, sans-serif;
 	display: inline;
-	font-weight: bold;
 	list-style-type: none;
 	border-radius: 5px;
 	color:#fff;
@@ -32,8 +51,6 @@ body {
   text-align: center;
 }
 
-/* stylesheet for your custom graph */
-
 .states {
   fill: none;
   stroke: #fff;
@@ -43,11 +60,16 @@ body {
 .states-choropleth {
   fill: #ccc;
 }
+
+.legend {
+	position:absolute;
+}
+
 #metrics {
 	display: inline;
-   	position:fixed;
-	right:50px;
-	top:100px;
+   	position:absolute;
+	right:80px;
+	top:150px;
 	font-size: 11px;
 	display: inline-block;
     float: left;
@@ -62,7 +84,7 @@ body {
 
 #metrics h4 {
     font-size: 13px;
-    font-family: Helvetica, sans-serif;
+    font-family: sans-serif;
     text-align: center;
     margin-bottom: 0;
 }
@@ -70,20 +92,35 @@ body {
 #metrics ul {
 list-style-type: none;
     font-size: 12px;
-    font-family: Helvetica, sans-serif;
+    font-family:  sans-serif;
     margin-left: 10;
     padding: 0;
 	font: 12px sans-serif;
 	border: 1px;
 	border-radius: 5px;
-
+	
 }
 
 #metrics ul li {
-    background-color: #9ecae1;
-    padding: 3px;
-    margin: 2px;
+	background-color: #9ecae1;
+	padding: 3px;
+	margin: 2px;
 	border-radius: 5px;
+	-webkit-box-shadow: 5px 5px 3px #666666;
+	-moz-box-shadow: 5px 5px 3px #666666;
+	box-shadow: 5px 5px 3px #666666; /* offset-x, offset-y, blur-radius, color */
+}
+#metrics ul li:hover {
+  background: -webkit-linear-gradient(top, #3cb0fd, #3498db);
+  background: -moz-linear-gradient(top, #3cb0fd, #3498db);
+  background: -o-linear-gradient(top, #3cb0fd, #3498db);
+  background: linear-gradient(to bottom, #3cb0fd, #3498db);
+}
+
+#metrics ul li:active {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
 }
 
 div.years_buttons {
@@ -98,21 +135,12 @@ div.years_buttons div {
 }
 
 
-.legend {
-	position:fixed;
-	right:50px;
-	top:500px;
-	font: 8px sans-serif;
-	font-weight: bold;
-}
-
-
 #tooltip-container {
 	position: absolute;
 	background-color: #fff;
 	color: #000;
 	padding: 10px;
-	font: 13px sans-serif;
+
 	background: white;
 	border: 0px;
 	border-radius: 5px;
@@ -141,45 +169,46 @@ div.years_buttons div {
   margin: 200px 0 10px 20px;
   width: 1500px;
 }
-
 </style>
-<div id="tooltip-container"></div>
-<div id="canvas-svg"  class = "centered">
-	<div id="metrics"  align = "left">
-			<ul class="metrics_button" >
-			<p>Click to see the counts</p>
-			<li data-metric="TotalCountOfIncidents" >Total Count Of Incident Reports</li>
-			<li data-metric="PropertyCrimes" >Property Crimes</li>
-			<li data-metric="ViolentCrimes" >Violent Crimes</li>
-			<li data-metric="Robbery">Robbery</li>
-			<li data-metric="Murder" class="differenceLoc">Murder</li>
-			<li data-metric="Burglary" class="differenceLoc">Burglary</li>
-			<li data-metric="Larceny" class="differenceLoc">Larceny</li>
-			<li data-metric="Rape" class="differenceLoc">Rape</li>
-			<li data-metric="AggravatedAssault" class="differenceLoc">Aggravated Assault</li>
-			<li data-metric="MotorVehicleTheft" class="differenceLoc">Motor Vehicle Theft</li>
-			</ul>
-
+<body>
+<div id = "main" class = "centered">
+	<div id="tooltip-container"></div>
+	<div id="button" align= "right">
+	  <a class="btn" href="about.html">About the Visualization</a>
 	</div>
-	<div id = "map" class = "centered">
+	<div id="canvas-svg"  class = "centered">
+		<div id="metrics"  align = "left">
+				<ul class="metrics_button" >
+				<p>Click to see the counts</p>
+				<li data-metric="TotalCountOfIncidents" >Total Count Of Incident Reports</li>
+				<li data-metric="PropertyCrimes" >Property Crimes</li>
+				<li data-metric="ViolentCrimes" >Violent Crimes</li>
+				<li data-metric="Robbery">Robbery</li>
+				<li data-metric="Murder" class="differenceLoc">Murder</li>
+				<li data-metric="Burglary" class="differenceLoc">Burglary</li>
+				<li data-metric="Larceny" class="differenceLoc">Larceny</li>
+				<li data-metric="Rape" class="differenceLoc">Rape</li>
+				<li data-metric="AggravatedAssault" class="differenceLoc">Aggravated Assault</li>
+				<li data-metric="MotorVehicleTheft" class="differenceLoc">Motor Vehicle Theft</li>
+				</ul>
+		</div>
+		<div id = "map" class = "centered">
+		</div>
 	</div>
-</div>
+	</main>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://unpkg.com/topojson-client@3"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.1.0/topojson.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
-<body>
-
-<h3 >SOURCE: <a href="https://ucr.fbi.gov/"> FBI’s Crime Data</a> reporting has extensive data from 1994-2014 available for criminal offenses by organized by state and city.
-<li>Can this crime data be used to increase crime prevention? </li>
-<li>Does the data on victims and the perpetrators reveal any race being affected more? </li>
-<li>What factors have contributed to the increase in crime in some metros compared to others where they have significantly decreased? </li>
-</h3>
-
-
+<h4 align="justify">SOURCE: <a href="https://ucr.fbi.gov/"> FBI’s Crime Data</a> reporting has extensive data from 1994-2014 available for criminal offenses by organized by state and city.
+	<li>Can this crime data be used to increase crime prevention? </li>
+	<li>Does the data on victims and the perpetrators reveal any race being affected more? </li>
+	<li>What factors have contributed to the increase in crime in some metros compared to others where they have significantly decreased? </li>
+</h4>
 
 <script>
+
 var current = "TotalCountOfIncidents"; // default view
 var totalcounts,property,violent,robbery,murder,burglary,larceny,rape,aggravatedassault,motorvehicletheft;
 // use a d3 map to make a lookup table for the string in the chart title
@@ -198,27 +227,25 @@ chartLabels.set("MotorVehicleTheft", "Motor Vehicle Theft");
 var lowColor = '#deebf7';
 var highColor = '#08306b';
 var w = 100, h = 240;
-var init_year = 1994;
+var selectedYear = 1994;
 var headline = "Crime Data in the US ";
 
-// slider
-d3.select("body").insert("p", ":first-child").append("input")
+d3.select("#main")
+		.insert("h4", ":first-child")
+		.text("Slide to see the changes through the years (1994- 2014)")
+		.insert("p", ":first-child").append("input")
 				.attr("type", "range")
 				.attr("min", "1994")
 				.attr("max", "2014")
-				.attr("value", init_year)
+				.attr("step","1")
+				.attr("value", selectedYear)
 				.attr("id", "year")
 				.attr("text","Year");
 
-;
-d3.select("body")
-		.insert("h3", ":first-child")
-		.text("Slide to see the changes through the years:");
-
 d3.select("body")
 		.insert("h1", ":first-child")
-		.text(headline + init_year + " - " + current)
-		.attr("text-anchor", "middle")
+		.text(headline + selectedYear + " - " +current)
+		.attr("text-anchor", "middle");
 
 var key = d3.select("#metrics")
 		.append("svg")
@@ -267,7 +294,7 @@ function loadButtons(error, results) {
 
 	var config = {"color1":lowColor,"color2":highColor,"stateDataColumn":"State",
 				"defaultValue":"1994","state":"State"};
-	var WIDTH = 1200, HEIGHT = 600;
+	var WIDTH = 960, HEIGHT = 600;
 	var COLOR_COUNTS = 50;
 	var SCALE = 0.9;
 
@@ -524,12 +551,14 @@ var tooltipChart = tooltip
 			  .attr("class", "states")
 			  .attr("transform", "scale(" + SCALE + ")")
 			  .attr("d", path);
-
-		 d3.select("h1").text(headline + d3.select("#year").node().value + " - " + current ).attr("text-anchor", "middle");;
+		
+		selectedYear=d3.select("#year").node().value;
+		d3.select("h1").text(headline + " ("+selectedYear +"-"+current +")" ).attr("text-anchor", "middle");
+		d3.select("#year").attr("value",selectedYear);
 
 		 var dataArray = [];
 	for (var d = 0; d < data.length; d++) {
-		dataArray.push(parseFloat(data[d][init_year]))
+		dataArray.push(parseFloat(data[d][selectedYear]))
 	}
 	var minVal = d3.min(dataArray)
 	var maxVal = d3.max(dataArray)
@@ -569,7 +598,7 @@ var tooltipChart = tooltip
 
     }
 
-    drawMap(init_year);
+    drawMap(selectedYear);
 	var colorScale = d3.scaleLinear().range([lowColor, highColor]);
 		d3.selectAll("#metrics li")
 			.on("click", function() {
@@ -632,15 +661,15 @@ var tooltipChart = tooltip
 
 
 		});
-		init_year=1994;
-		d3.select("#year").attr("value", init_year);
-		drawMap(init_year);
+		selectedYear=1994;
+		d3.select("#year").attr("value", selectedYear);
+		drawMap(selectedYear);
     });
 
 	// was the slider used?
 	d3.select("#year").on("input", function() {
-		init_year=this.value
-		drawMap(init_year);
+		selectedYear=this.value
+		drawMap(selectedYear);
 	});
 
 
@@ -649,17 +678,6 @@ var tooltipChart = tooltip
 });
 
 </script>
-<h3 id = "bottomMenu" >
-<div id="navcontainer">
-<ul id="navlist">
-<li id="active"><li><a href="index.php">Crime Data in US</a></li>
-<li><a href="CrimeByState.html">Totals By Crime Type</a></li>
-<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
-<li><a href="CrimeByRace.html">Crime By Race</a></li>
-<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
-<li><a href="VictimPerpAge.html">Victim Perpetrator Age</a></li>
-</ul>
-</div>
-</h3>
+
 </body>
 </html>

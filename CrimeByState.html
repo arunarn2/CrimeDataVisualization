@@ -1,26 +1,38 @@
+
 <!DOCTYPE html>
-<meta charset="utf-8">
+<html lang="en">
 <head>
-	<h2 id = "title" >Crime Distribution (1994-2004)</h2>
-	<link rel="stylesheet" type="text/css" href="line.css">
+    <meta charset="UTF-8">
+	<h1 id = "title" align="center">Crime Distribution as a Percent Of Population (1994-2014)</h1>
+		<br><br>
+    <link rel="stylesheet" type="text/css" href="line.css">
+		<h3 id = "bottomMenu" align = "center">
+	<div id="navcontainer">
+	<ul id="navlist">
+	<li id="active"><li><a href="index.php">Crime Data in US</a></li>
+	<li><a href="CrimeByState.html">Percentages By Crime Type</a></li>
+	<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
+	<li><a href="CrimeByRace.html">Crime By Race</a></li>
+	<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
+	<li><a href="VictimPerpAge.html">Victim Perpetrator Age</a></li>
+	<li><a href="CrimeSolved.html">Crime Solved By Agency</a></li>
+	</ul>
+	</div>
+	</h3>
+<br>
 </head>
 <style>
 
 body {
-	font: 11px sans-serif;
 	background-color: #ffffff;
+	text-align: center;
+    margin: 0 auto;
 }
-#navlist li
-{
-    font-size: 15px;
-    font-family: Helvetica, sans-serif;
-	display: inline;
-	font-weight: bold;
-	list-style-type: none;
-	border-radius: 5px;
-	color:#fff;
-	background-color: #bdbdbd;
+
+#canvas-svg {
+	text-align: center;
 }
+
 
 
 /* stylesheet for your custom graph */
@@ -37,10 +49,11 @@ body {
 
 .legend {
 	position:fixed;
-	right:100px;
+	right:150px;
 	top:330px;
-	font: 8px sans-serif;
-	font-weight: bold;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    font-weight: 600;
 }
 
 #tooltip-container {
@@ -66,23 +79,20 @@ body {
 
 .option-select {
   margin-top: 20px;
-  margin-left: 600px;
+  margin-left: 300px;
   fill: #64b646;
   width: auto;
   padding: 5px;
   font-weight: bold;
 }
-body {
-	font: 11px sans-serif;
-	background-color: #ffffff;
-	text-align: center;
-}
+
 
 </style>
 <div class="graphWrapper" id="graphLine"></div>
 <div id="selectors"></div>
 <div id="tooltip-container"></div>
-<div id="canvas-svg">
+<div id="canvas-svg" align="center">
+	<div id="map" align="right"> </div>
 	<div id="leg"> </div>
 </div>
 <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -97,7 +107,7 @@ body {
 <script>
 
 
-d3.csv("CrimeByState.csv", function(err, data) {
+d3.csv("CrimeByStatePercent.csv", function(err, data) {
 
   var config = {"color1":"#d3e5ff","color2":"#08306B","stateDataColumn":"State",
 				"defaultValue":"TotalCountOfIncidents","state":"State"};
@@ -195,7 +205,7 @@ d3.csv("CrimeByState.csv", function(err, data) {
 
   var path = d3.geoPath();
 
-  var svg = d3.select("#canvas-svg").append("svg")
+  var svg = d3.select("#map").append("svg")
       .attr("width", width)
       .attr("height", height);
 
@@ -232,6 +242,13 @@ d3.csv("CrimeByState.csv", function(err, data) {
         var id = name_id_map[d[config.state]];
         valueById.set(id, +d[dataColumn]);
       });
+	   d3.select("svg.legend").remove();
+		key = d3.select("#metrics")
+		.append("svg")
+		.attr("width", w)
+		.attr("height", h)
+		.attr("class", "legend");
+		
 
       quantize.domain([
 		d3.min(data, function(d){ return +d[dataColumn] }),
@@ -268,6 +285,7 @@ d3.csv("CrimeByState.csv", function(err, data) {
                 html += "</span>";
                 html += "<span class=\"tooltip_value\">";
                 html += valueFormat(dataMap[id_name_map[d.id]][Object.keys(data[0])[i]]);
+				html += "%";
                 html += "";
                 html += "</span>";
                 html += "</div>";
@@ -302,24 +320,20 @@ d3.csv("CrimeByState.csv", function(err, data) {
           .attr("class", "states")
           .attr("transform", "scale(" + SCALE + ")")
           .attr("d", path);
-    }
+    
+	
+			// add a legend
+		var dataArray = [];
+		for (var d = 0; d < data.length; d++) {
+			//dataArray.push(parseFloat(data[d].TotalCountOfIncidents))
+			dataArray.push(parseFloat(data[d][dataColumn]))
+		}
+		var minVal = d3.min(dataArray)
+		var maxVal = d3.max(dataArray)
+		var ramp = d3.scaleLinear().domain([minVal,maxVal]).range([lowColor,highColor])
 
-    drawMap(config.defaultValue);
-
-    option_select.on("change", function() {
-		drawMap($("#selectors").find(".option-select").val());
-    });
-  // add a legend
-  var dataArray = [];
-	for (var d = 0; d < data.length; d++) {
-		dataArray.push(parseFloat(data[d].TotalCountOfIncidents))
-	}
-	var minVal = d3.min(dataArray)
-	var maxVal = d3.max(dataArray)
-	var ramp = d3.scaleLinear().domain([minVal,maxVal]).range([lowColor,highColor])
-
-	var lowColor = '#deebf7'
-	var highColor = '#08306b'
+		var lowColor = '#deebf7'
+		var highColor = '#08306b'
 		var w = 100, h = 240;
 		var key = d3.select("#leg")
 			.append("svg")
@@ -357,31 +371,28 @@ d3.csv("CrimeByState.csv", function(err, data) {
 			.range([h, 0])
 			.domain([minVal, maxVal]);
 
-		var yAxis = d3.axisRight(y).tickFormat(function(d){return d/1000000 + " Mil"});
+		var yAxis = d3.axisRight(y).tickFormat(function(d){return d + "%"});
 
 		key.append("g")
 			.attr("class", "y axis")
 			.attr("transform", "translate(20,10)")
 			.call(yAxis)
+}
+    drawMap(config.defaultValue);
 
+    option_select.on("change", function() {
+		drawMap($("#selectors").find(".option-select").val());
+    });
   });
   });
 });
 
 </script>
-<h4> Use the drop down to select type of crime and mouse over to see the totals during the period for each state.</h4>
-<h3>
-<br>
-<div id="navcontainer">
-<ul id="navlist">
-<li id="active"><li><a href="index.php">Crime Data in US</a></li>
-<li><a href="CrimeByState.html">Totals By Crime Type</a></li>
-<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
-<li><a href="CrimeByRace.html">Crime By Race</a></li>
-<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
-<li><a href="VictimPerpAge.html">Victim Perpetrator Age</a></li>
-</ul>
-</div>
-</h3>
+<h4 align ="justify"> Use the drop down to select type of crime and mouse over to see the totals during the period for each state. The results are quiet surprising. </h4>
+
+<h4 align ="justify"> Averages for each crime has been aggregated as a percent of the total population in the state for the particular year and aggregated again to compute the average for the state for the 2 decades. </h4>
+
+<h4 align ="justify">Across the nation the percentages for Larceny, Burglary and Property Crimes are higher. But some of the least populous states like North Dakota, South Dakota, Wyoming etc have an increased precentages of these misdemeanor. Also it is likely that these numbers are slightly different across the states because it depends on the state law as to whether they get charged as a felony or a misdemeanor  </h4>
+
 </body>
 </html>

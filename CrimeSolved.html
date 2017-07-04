@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<h1 id = "title" align="center">Crime Solved By Agency (1994-2014)</h1>
+		<br><br>
+    <link rel="stylesheet" type="text/css" href="line.css">
+	<h3 id = "bottomMenu" align = "center">
+<div id="navcontainer">
+<ul id="navlist">
+<li id="active"><li><a href="index.php">Crime Data in US</a></li>
+<li><a href="CrimeByState.html">Percentages By Crime Type</a></li>
+<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
+<li><a href="CrimeByRace.html">Crime By Race</a></li>
+<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
+<li><a href="VictimPerpAge.html">Victim Perpetrator Age</a></li>
+<li><a href="CrimeSolved.html">Crime Solved By Agency</a></li>
+</ul>
+</div>
+</h3><br>
+
+    <script src="https://d3js.org/d3.v3.js" charset="utf-8"></script>
+	<script src="line.js" charset="utf-8"></script>
+</head>
+  <style type="text/css">
+  
+  svg {
+    font: 10px sans-serif;
+    shape-rendering: crispEdges;
+	text-align: center;
+  }
+
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: #000;
+  }
+ 
+  path.domain {
+    stroke: none;
+  }
+ 
+  .y .tick line {
+    stroke: #ddd;
+  }
+  
+  #navlist li
+{
+    font-size: 15px;
+    font-family: sans-serif;
+	display: inline;
+	font-weight: bold;
+	list-style-type: none;
+	border-radius: 5px;
+	color:#fff;
+	background-color: #bdbdbd;
+	height = 80px;
+}
+  </style>
+
+
+<body>
+
+
+<script type="text/javascript">
+
+// Setup svg using Bostock's margin convention
+
+var margin = {top: 20, right: 160, bottom: 35, left: 30};
+
+var width = 960 - margin.left - margin.right,
+    height = 600 - margin.top - margin.bottom;
+
+var svg = d3.select("body")
+  .append("svg")
+  .attr("width", width + margin.left + margin.right)
+  .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+/* Data in strings like it would be if imported from a csv */
+var data = [
+  { Agency: "County Police", No: "3.26", Yes: "4.70" },
+  { Agency: "Municipal Police", No: "22.15", Yes: "42.98" },
+  { Agency: "Regional Police", No: "0", Yes: "0" },
+  { Agency: "Sheriff", No: "4.80", Yes: "21.69" },
+  { Agency: "Special Police", No: "2.1", Yes: "6.2" },
+  { Agency: "State Police", No: ".1", Yes: "0.25" },
+  { Agency: "Tribal Police", No: "1.04", Yes: "1.15" },
+];
+
+// Transpose the data into layers
+var dataset = d3.layout.stack()(["No", "Yes"].map(function(fruit) {
+  return data.map(function(d) {
+    return {x: d.Agency, y: +d[fruit]};
+  });
+}));
+
+
+// Set x, y and colors
+var x = d3.scale.ordinal()
+  .domain(dataset[0].map(function(d) { return d.x; }))
+  .rangeRoundBands([10, width-10], 0.02);
+
+var y = d3.scale.linear()
+  .domain([0, d3.max(dataset, function(d) {  return d3.max(d, function(d) { return d.y0 + d.y; });  })])
+  .range([height, 0]);
+
+var colors = ["#3690c0", "#fe9929"];
+
+
+// Define and draw axes
+var yAxis = d3.svg.axis()
+  .scale(y)
+  .orient("left")
+  .ticks(5)
+  .tickSize(-width, 0, 0)
+  .tickFormat( function(d) { return d +"%"} );
+ 
+svg.append("text").attr("transform",
+						"translate(" + (width/2 -10) + " ," + 
+									   (height + 30) + ")")
+				  .style("text-anchor", "middle")
+				  .text("Agency");
+
+var xAxis = d3.svg.axis()
+  .scale(x)
+  .orient("bottom");
+svg.append("text")
+				  .attr("transform", "rotate(-90)")
+				  .attr("y", 0 - margin.left-2)
+				  .attr("x",0 - (height / 2))
+				  .attr("dy", "1em")
+				  .style("text-anchor", "middle")
+				  .text("% of Cases Solved or Not")
+
+svg.append("g")
+  .attr("class", "y axis")
+  .call(yAxis);
+
+svg.append("g")
+  .attr("class", "x axis")
+  .attr("transform", "translate(0," + height + ")")
+  .call(xAxis);
+
+
+// Create groups for each series, rects for each segment 
+var groups = svg.selectAll("g.cost")
+  .data(dataset)
+  .enter().append("g")
+  .attr("class", "cost")
+  .style("fill", function(d, i) { return colors[i]; });
+
+var rect = groups.selectAll("rect")
+  .data(function(d) { return d; })
+  .enter()
+  .append("rect")
+  .attr("x", function(d) { return x(d.x); })
+  .attr("y", function(d) { return y(d.y0 + d.y); })
+  .attr("height", function(d) { return y(d.y0) - y(d.y0 + d.y); })
+  .attr("width", x.rangeBand())
+  .on("mouseover", function() { tooltip.style("display", null); })
+  .on("mouseout", function() { tooltip.style("display", "none"); })
+  .on("mousemove", function(d) {
+    var xPosition = d3.mouse(this)[0] - 15;
+    var yPosition = d3.mouse(this)[1] - 25;
+    tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
+    tooltip.select("text").text(d.y +"%");
+  });
+
+
+// Draw legend
+var legend = svg.selectAll(".legend")
+  .data(colors)
+  .enter().append("g")
+  .attr("class", "legend")
+  .attr("transform", function(d, i) { return "translate(30," + i * 19 + ")"; });
+ 
+legend.append("rect")
+  .attr("x", width - 18)
+  .attr("width", 18)
+  .attr("height", 18)
+  .style("fill", function(d, i) {return colors.slice().reverse()[i];});
+ 
+legend.append("text")
+  .attr("x", width + 5)
+  .attr("y", 9)
+  .attr("dy", ".35em")
+  .style("text-anchor", "start")
+  .text(function(d, i) { 
+    switch (i) {
+      case 0: return "No, Not Solved";
+      case 1: return "Yes, Crime Solved";
+    }
+  });
+
+
+// Prep the tooltip bits, initial display is hidden
+var tooltip = svg.append("g")
+  .attr("class", "tooltip")
+  .style("display", "none");
+    
+tooltip.append("rect")
+  .attr("width", 30)
+  .attr("height", 20)
+  .attr("fill", "white")
+  .style("opacity", 0.5);
+
+tooltip.append("text")
+  .attr("x", 15)
+  .attr("dy", "1.2em")
+  .style("text-anchor", "middle")
+  .attr("font-size", "12px")
+  .attr("font-weight", "bold");
+
+</script>
+<h4 align="justify">
+The Municipal Police receive the most cases and have a better track in solving them. 
+</h4>
+<h4 align="justify">
+Can this model be followed by other agencies? </h4>
+<h4 align="justify">
+What can be done to improve the ratio of cases solved? </h4>
+
+
+
+</body>
+</html>

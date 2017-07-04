@@ -2,9 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-	<h2 id = "title" align="center">Most Dangerous Cities in the US (1994-2004)</h2>
+	<h1 id = "title" align="center">Most Dangerous Cities (1994-2014)</h1>
+		<br><br>
     <link rel="stylesheet" type="text/css" href="line.css">
-    <script src="http://d3js.org/d3.v3.js" charset="utf-8"></script>
+	<h3 id = "bottomMenu" align = "center">
+<div id="navcontainer">
+<ul id="navlist">
+<li id="active"><li><a href="index.php">Crime Data in US</a></li>
+<li><a href="CrimeByState.html">Percentages By Crime Type</a></li>
+<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
+<li><a href="CrimeByRace.html">Crime By Race</a></li>
+<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
+<li><a href="VictimPerpAge.html">Victim Perpetrator Age</a></li>
+<li><a href="CrimeSolved.html">Crime Solved By Agency</a></li>
+</ul>
+</div>
+</h3><br>
+
+    <script src="https://d3js.org/d3.v3.js" charset="utf-8"></script>
+	<script src="line.js" charset="utf-8"></script>
 </head>
 <body>
 <div class="graphWrapper" id="graphLine"></div>
@@ -18,7 +34,7 @@
         d.Broward = +d.Broward;
         d.Orange = +d.Orange;
 		d.NewYork = +d.NewYork;
-		d.LosAngeles = +d.LosAngeles;
+		d.Duval = +d.Duval;
     });
 
     var chart = drawLineGraph(data, 'year', {
@@ -27,7 +43,7 @@
         'Broward': {column: 'Broward'},
         'Orange': {column: 'Orange'},
         'New York': {column: 'NewYork'},
-        'Los Angeles': {column: 'LosAngeles'}
+        'Duval': {column: 'Duval'}
     }, {xAxis: 'Years', yAxis: 'Cities'});
     chart.bind("#graphLine");
     chart.render();
@@ -35,17 +51,9 @@
 });
 </script>
 <script src="line.js" charset="utf-8"></script>
-<h3 id = "bottomMenu" align = "center">
-<div id="navcontainer">
-<ul id="navlist">
-<li id="active"><li><a href="index.php">Crime Data in US</a></li>
-<li><a href="CrimeByState.html">Totals By Crime Type</a></li>
-<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
-<li><a href="CrimeByRace.html">Crime By Race</a></li>
-<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
-<li><a href="VictimPerpAge.html">Victim Perpetrator Age</a></li>
-</ul>
-</div>
-</h3>
+<h4  align ="justify">This chart is an attempt to find the cities with the highest crime rate. </h4>
+<h4  align ="justify">This report clearly indicates that the crime rate in New York city was very high in the 90's and by 2000 there seems to be a drastic reduction in overall crime rate. So, what did the city do differently?</h4>
+<h4  align ="justify">Contrarily, the crime in Dade and Broward seems to have shot up. Can Miami do the same that New York did as the profile of both cities are quite similar? </h4>
+
 </body>
 </html>
