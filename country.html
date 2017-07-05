@@ -21,31 +21,37 @@
 </h3><br>
 
     <script src="https://d3js.org/d3.v3.js" charset="utf-8"></script>
-	<script src="line.js" charset="utf-8"></script>
+	
 </head>
 <body>
 <div class="graphWrapper" id="graphLine"></div>
-
+<script src="line.js" charset="utf-8"></script>
 <script type="text/javascript">
-    d3.csv('MostDangerousCities.csv', function(error, data) {
+    d3.csv('Book1.csv', function(error, data) {
     data.forEach(function (d) {
-        d.year = +d.year;
-		d.Dade = +d.Dade;
-        d.PalmBeach = +d.PalmBeach;
-        d.Broward = +d.Broward;
-        d.Orange = +d.Orange;
-		d.NewYork = +d.NewYork;
-		d.Duval = +d.Duval;
+        d.Year = +d.Year;
+		d.Violent = +d.Violent;
+        d.Property = +d.Property;
+        d.Murder = +d.Murder;
+        d.Rape = +d.Rape;
+		d.Robbery = +d.Robbery;
+		d.AggravatedAssault = +d.AggravatedAssault;
+		d.Burglary = +d.Burglary;
+		d.Larceny = +d.Larceny;
+		d.MotorVehicleTheft = +d.MotorVehicleTheft;
     });
 
-    var chart = drawLineGraph(data, 'year', {
-		'Dade': {column: 'Dade'},
-        'Palm Beach': {column: 'PalmBeach'},
-        'Broward': {column: 'Broward'},
-        'Orange': {column: 'Orange'},
-        'New York': {column: 'NewYork'},
-        'Duval': {column: 'Duval'}
-    }, {xAxis: 'Years', yAxis: 'Cities'});
+    var chart = drawLineGraph(data, 'Year', {
+		'Violent': {column: 'Violent'},
+        'Property': {column: 'Property'},
+        'Murder': {column: 'Murder'},
+        'Rape': {column: 'Rape'},
+        'Robbery': {column: 'Robbery'},
+        'Aggravated Assault': {column: 'AggravatedAssault'},
+        'Burglary': {column: 'Burglary'},
+        'Larceny': {column: 'Larceny'},
+        'Motor Vehicle Theft': {column: 'MotorVehicleTheft'}
+    }, {xAxis: 'Years', yAxis: 'Crime'});
     chart.bind("#graphLine");
     chart.render();
 

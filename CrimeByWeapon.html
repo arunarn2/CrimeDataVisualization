@@ -2,19 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-	<h1 id = "title" align="center">Crime Distribution By Weapon (1994-2014)</h1>
+	<h2 id = "title" align="center">Crime Distribution By Weapon (1994-2014)</h2>
+		<h3 id = "subtitle" align = "center">Gun Violence Kills More Americans Than Terrorism!<h3>
 		<br><br>
 		<link rel="stylesheet" type="text/css" href="line.css">
 		<h3 id = "bottomMenu" align = "center">
 	<div id="navcontainer">
 	<ul id="navlist">
-	<li id="active"><li><a href="index.php">Crime Data in US</a></li>
-	<li><a href="CrimeByState.html">Percentages By Crime Type</a></li>
-	<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
-	<li><a href="CrimeByRace.html">Crime By Race</a></li>
-	<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
-	<li><a href="VictimPerpAge.html">Victim Perpetrator Age</a></li>
-	<li><a href="CrimeSolved.html">Crime Solved By Agency</a></li>
+<li id="active"><li><a href="index.php">Crime Data in US</a></li>
+<li><a href="CrimeByState.html">Crime in Percentages</a></li>
+<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
+<li><a href="CrimeByRace.html">Crime By Race</a></li>
+<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
+<li><a href="VictimPerpAge.html">Victim Perpetrator Age</a></li>
+<li><a href="CrimeSolved.html">Crimes Solved</a></li>
 	</ul>
 	</div>
 	</h3><br>
@@ -39,7 +40,6 @@ div.tooltip {
         padding: 5px;
         background: #f99e1a;
         border-radius: 20px;
-
     }
 
 </style>
@@ -51,14 +51,14 @@ var margin = {top: 10,
                 bottom: 20,
                 left: 30
             },
-            width = 900 - margin.left - margin.right,
+            width = 1000 - margin.left - margin.right,
             height = 500 - margin.top - margin.bottom;
 
 var svg = d3.select("svg")
             .attr("width", width)
             .attr("height", height)
-			.call(d3.zoom().on("zoom", function () {
-            svg.attr("transform", d3.event.transform)}))
+			//.call(d3.zoom().on("zoom", function () {
+           // svg.attr("transform", d3.event.transform)}))
 
 
 var format = d3.format(",d");
@@ -122,11 +122,19 @@ d3.csv("CrimeByWeapon.csv", function(d) {
 
 </script>
 <h4 align="justify">
-Are we  in this current situation because of all our attempts to protect the Second Amendment?
+
+<li> The U.S. has more guns per capita than any other country. And demand for guns is on the rise. The homicide rates for 2013 and 2014 were the lowest in more than 50 years. Firearms are used in roughly 7 in 10 killings, the FBI says. </li>
+<li>Handgun is most used weapon in any crime and is one of the leading causes for death in the country. After many shootings, the focus immediately shifts toward restricting the use of semiautomatic rifles. But statistics show that most murders in the United States are not a part of mass shootings, and handguns are the most common weapon. </li>
+<br>
+<li>Gun control debate has been something that split the nation but there is enough data that can help us put some additional checkpoints. Given these results would be make sense to have additional regulations on Gun control and increase back ground checks. Can we put additional safety measures here? </li>
+<br>
+
+<li>Chicago recorded its deadliest month in two decades in August 2015, part of a sharp rise in gun violence in the nation's third-largest city this year. There were more than 449 homicides in the city between the start of the year and the end of August, a roughly 50 percent increase over the same period last year, police said. That's also more than 80 percent higher than at the same point in 2014, when the city ended the year with just over 400 homicides — the least in a half-century.</li>
+<br>
+<li>Other cities, such as Los Angeles and Memphis, Tennessee, also have seen homicides rise, according to a midyear survey by the Major Cities Chiefs Association. But experts say it isn't enough to suggest a trend, noting numbers are down elsewhere, such as Oakland, California, and Miami.</li>
 </h4>
-<h4 align="justify">
-Gun control debate has been something that split the nation but there is enough data that can help us put some additional checkpoints. </h4>
-<h4 align="justify">Given these results would be make sense to have additional regulations on Gun control and increase back ground checks. Can we put additional safety measures here?</h4>
-</h4>
-</body>
+
+
+<h3 align="justify"> The Truth about Gun Violence<h3> <br>
+<img align="center" src = "weapon.jpg">
 </html>

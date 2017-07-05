@@ -9,16 +9,16 @@
 			<div id="navcontainer">
 			<ul id="navlist">
 				<li id="active"><li><a href="index.php">Crime Data in US</a></li>
-				<li><a href="CrimeByState.html">Crime in Percentages</a></li>
+				<li><a href="CrimeByState.html">Percentages By Crime Type</a></li>
 				<li><a href="CrimeByWeapon.html">Crime By Weapon</a></li>
 				<li><a href="CrimeByRace.html">Crime By Race</a></li>
 				<li><a href="MostDangerousCities.html">Most Dangerous Cites</a></li>
 				<li><a href="VictimPerpAge.html">Victim Perpetrator Age</a></li>
-				<li><a href="CrimeSolved.html">Crimes Solved</a></li>
+				<li><a href="CrimeSolved.html">Crime Solved By Agency</a></li>
 			</ul>
 			</div>
 		</h3>
-    <script src="https://d3js.org/d3.v3.js" charset="utf-8"></script>
+    
 	<script src="line.js" charset="utf-8"></script>
 	<br>
 </head>
@@ -208,7 +208,10 @@ div.years_buttons div {
 </h4>
 
 <script>
-
+var xScale, yScale, tooltipsvg, line, xAxis, yAxis;
+var dateFormat = d3.timeFormat("%Y");
+var tooltip = d3.select("body").append("div").attr("class", "tooltip").style("display", "none");
+var lineData=[]
 var current = "TotalCountOfIncidents"; // default view
 var totalcounts,property,violent,robbery,murder,burglary,larceny,rape,aggravatedassault,motorvehicletheft;
 // use a d3 map to make a lookup table for the string in the chart title
@@ -223,12 +226,69 @@ chartLabels.set("Larceny", "Larceny");
 chartLabels.set("Rape", "Rape");
 chartLabels.set("AggravatedAssault", "Aggravated Assault");
 chartLabels.set("MotorVehicleTheft", "Motor Vehicle Theft");
-
+var data1 = [3, 6, 2, 7, 5, 2, 0, 3, 8, 9, 2, 5, 9, 3, 6, 3, 6, 2, 7, 5, 2, 1, 3, 8, 9, 2, 5, 9, 2, 7];
 var lowColor = '#deebf7';
 var highColor = '#08306b';
 var w = 100, h = 240;
 var selectedYear = 1994;
 var headline = "Crime Data in the US ";
+
+function setupTooltipChart() {
+
+   var m = [80, 80, 80, 80]; // margins
+		var w = 1000 - m[1] - m[3]; // width
+		var h = 400 - m[0] - m[2]; // height
+		
+		// create a simple data array that we'll plot with a line (this array represents only the Y values, X will just be the index location)
+		var data = [3, 6, 2, 7, 5, 2, 0, 3, 8, 9, 2, 5, 9, 3, 6, 3, 6, 2, 7, 5, 2, 1, 3, 8, 9, 2, 5, 9, 2, 7];
+		// X scale will fit all values from data[] within pixels 0-w
+		var x = d3.scaleLinear().domain([0, data.length]).range([0, w]);
+		// Y scale will fit values from 0-10 within pixels h-0 (Note the inverted domain for the y-scale: bigger is up!)
+		var y = d3.scaleLinear().domain([0, 10]).range([h, 0]);
+			// automatically determining max range can work something like this
+			// var y = d3.scale.linear().domain([0, d3.max(data)]).range([h, 0]);
+		// create a line function that can convert data[] into x and y points
+		var line = d3.line()
+			// assign the X function to plot our line as we wish
+			.x(function(d,i) { 
+				// verbose logging to show what's actually being done
+				console.log('Plotting X value for data point: ' + d + ' using index: ' + i + ' to be at: ' + x(i) + ' using our xScale.');
+				// return the X coordinate where we want to plot this datapoint
+				return x(i); 
+			})
+			.y(function(d) { 
+				// verbose logging to show what's actually being done
+				console.log('Plotting Y value for data point: ' + d + ' to be at: ' + y(d) + " using our yScale.");
+				// return the Y coordinate where we want to plot this datapoint
+				return y(d); 
+			})
+			// Add an SVG element with the desired dimensions and margin.
+			tooltipsvg = tooltip.append("svg:svg")
+			      .attr("width", w + m[1] + m[3])
+			      .attr("height", h + m[0] + m[2])
+			    .append("svg:g")
+			      .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+			// create yAxis
+		 xAxis = d3.axisBottom().scale(x).ticks(5);
+			// Add the x-axis.
+			tooltipsvg.append("svg:g")
+			      .attr("class", "x axis")
+			      .attr("transform", "translate(0," + h + ")")
+			      .call(xAxis);
+			// create left yAxis
+			 yAxisLeft = d3.axisLeft().scale(y).ticks(4);
+			// Add the y-axis to the left
+			tooltipsvg.append("svg:g")
+			      .attr("class", "y axis")
+			      .attr("transform", "translate(-25,0)")
+			      .call(yAxisLeft);
+			
+  			// Add the line by appending an svg:path element with the data line we created above
+			// do this AFTER the axes above so that the line is above the tick-lines
+  			tooltipsvg.append("svg:path").attr("d", line(data));
+
+}
+
 
 d3.select("#main")
 		.insert("h4", ":first-child")
@@ -406,6 +466,7 @@ function loadButtons(error, results) {
     });
 
     function drawMap(dataColumn) {
+		var xScale, yScale, tooltipsvg, line, xAxis, yAxis;
 		var valueById = d3.map();
 
 
@@ -435,6 +496,72 @@ function loadButtons(error, results) {
 		.attr("spreadMethod", "pad")
 		.attr("labelFormat",(d3.format("s")));
 		yAxis = d3.axisRight();
+		
+	for (var i = 0; i < Object.keys(data[0]).length-1; i++) {            
+		lineData.push({
+			year:Object.keys(data[0])[i],
+			value:Object.values(data[0])[i]
+		});
+	}
+	
+	 ///////////////////////////////////////////////////////////////////
+	  
+	    var m = [10, 20, 10, 20]; // margins
+		var wid = 150 - m[1] - m[3]; // width
+		var hei = 100 - m[0] - m[2]; // height
+		
+		// create a simple data1 array that we'll plot with a line (this array represents only the Y values, X will just be the index location)
+		
+		// X scale will fit all values from data1[] within pixels 0-w
+		var x = d3.scaleLinear().domain([0, data1.length]).range([0, wid]);
+		// Y scale will fit values from 0-10 within pixels h-0 (Note the inverted domain for the y-scale: bigger is up!)
+		var y = d3.scaleLinear().domain([0, 10]).range([hei, 0]);
+			// automatically determining max range can work something like this
+			// var y = d3.scale.linear().domain([0, d3.max(data1)]).range([hei, 0]);
+		// create a line function that can convert data1[] into x and y points
+		var line = d3.line()
+			// assign the X function to plot our line as we wish
+			.x(function(d,i) { 
+				// verbose logging to show what's actually being done
+				console.log('Plotting X value for data1 point: ' + d + ' using index: ' + i + ' to be at: ' + x(i) + ' using our xScale.');
+				// return the X coordinate where we want to plot this data1point
+				return x(i); 
+			})
+			.y(function(d) { 
+				// verbose logging to show what's actually being done
+				console.log('Plotting Y value for data1 point: ' + d + ' to be at: ' + y(d) + " using our yScale.");
+				// return the Y coordinate where we want to plot this data1point
+				return y(d); 
+			})
+			// Add an SVG element with the desired dimensions and margin.
+		tooltipsvg = tooltip.append("svg:svg")
+			      .attr("width", wid + m[1] + m[3])
+			      .attr("height", hei + m[0] + m[2])
+			    .append("svg:g")
+			      .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+			// create yAxis
+		xAxis = d3.axisBottom().scale(x).ticks(5);
+			// Add the x-axis.
+			tooltipsvg.append("svg:g")
+			      .attr("class", "x axis")
+			      .attr("transform", "translate(0," + hei + ")")
+			      .call(xAxis);
+		// create left yAxis
+		 yAxisLeft = d3.axisLeft().scale(y).ticks(4);
+		// Add the y-axis to the left
+		tooltipsvg.append("svg:g")
+			      .attr("class", "y axis")
+			      .attr("transform", "translate(-25,0)")
+			      .call(yAxisLeft);
+			
+		// Add the line by appending an svg:path element with the data1 line we created above
+		// do this AFTER the axes above so that the line is above the tick-lines
+		tooltipsvg.append("svg:path").attr("d", line(data1));
+		//////////////////////////////////////////////////////////////////////////////
+			  
+	 
+		
+	//setupTooltipChart();
 	  svg.append("g")
           .attr("class", "states-choropleth")
         .selectAll("path")
@@ -459,7 +586,6 @@ function loadButtons(error, results) {
               html += "</span>";
               html += "</div>";
 
-			  var years = {}, yvalues ={};
               for (var i = 0; i < Object.keys(data[0]).length-1; i++) {
                 html += "<div class=\"tooltip_kv\">";
                 html += "<span class='tooltip_key'>";
@@ -470,11 +596,13 @@ function loadButtons(error, results) {
                 html += "";
                 html += "</span>";
                 html += "</div>";
-				years[i]=Object.keys(data[0])[i];
-				yvalues[i]=dataMap[id_name_map[d.id]][Object.keys(data[0])[i]];
+				lineData.push({
+					year:Object.keys(data[0])[i],
+					value:dataMap[id_name_map[d.id]][Object.keys(data[0])[i]]
+				});
               }
 
-              $("#tooltip-container").html(html);
+              /*$("#tooltip-container").html(html);
               $(this).attr("fill-opacity", "0.7");
               $("#tooltip-container").show();
 
@@ -489,6 +617,42 @@ function loadButtons(error, results) {
               } else {
                 var tooltip_width = $("#tooltip-container").width();
                 d3.select("#tooltip-container")
+                  .style("top", (d3.event.layerY + 15) + "px")
+                  .style("left", (d3.event.layerX - tooltip_width - 30) + "px");
+              }*/
+			  d3.select(this).attr("id", "selected");
+  d3.select(this).attr("fill-opacity", "0.7");
+  tooltip.style("opacity", 1);
+
+			    tooltip.select("p").text("State"); // adds title text to tooltip
+
+
+
+    //yScale.domain(d3.extent(lineData, function(d) { return d.value; }));
+
+    var linechart = tooltipsvg.selectAll("path.line")
+          .data( [data1] );
+
+      linechart
+          .enter()
+          .append("path")
+          .attr("class", "line")
+          .attr("d", line);
+
+      linechart.transition().attr("d", line);
+
+      linechart.exit().remove();
+
+      tooltipsvg.selectAll(".x.axis").transition().call(xAxis);
+      tooltipsvg.selectAll(".y.axis").transition().call(yAxis);
+	  var map_width = $('.states-choropleth')[0].getBoundingClientRect().width;
+			  if (d3.event.layerX < map_width / 2) {
+                tooltip
+                  .style("top", (d3.event.layerY + 15) + "px")
+                  .style("left", (d3.event.layerX + 15) + "px");
+              } else {
+                var tooltip_width = $("#tooltip-container").width();
+                tooltip
                   .style("top", (d3.event.layerY + 15) + "px")
                   .style("left", (d3.event.layerX - tooltip_width - 30) + "px");
               }
@@ -536,7 +700,7 @@ function loadButtons(error, results) {
 		.range([h, 0])
 		.domain([minVal, maxVal]);
 
-	var yAxis = d3.axisRight(y).tickFormat(function(d){return valueFormat(d)});
+	var yAxis = d3.axisRight(y).tickFormat(function(d){return d/1000000 + " Mil"});
 
 	key.append("g")
 		.attr("class", "yaxis")
@@ -630,49 +794,6 @@ function loadButtons(error, results) {
 });
 
 </script>
-<br><br>
-<h3 align="center">ARE WE SAFER NOW? </h3>
-<h4 align="justify">Overall Decreasing Crime Rates Across the Country 
-<li>Property crime has declined significantly over the 2 decades</li>
-<li>Larceny also shows a decreasing trend</li>
-</h4>
-<div class="graphWrapper" id="graphLine"></div>
-<script src="line4.js" charset="utf-8"></script>
-
-
-<script type="text/javascript">
-    d3.csv('Book1.csv', function(error, data) {
-    data.forEach(function (d) {
-        d.Year = +d.Year;
-		d.Violent = +d.Violent;
-        d.Property = +d.Property;
-        d.Murder = +d.Murder;
-        d.Rape = +d.Rape;
-		d.Robbery = +d.Robbery;
-		d.AggravatedAssault = +d.AggravatedAssault;
-		d.Burglary = +d.Burglary;
-		d.Larceny = +d.Larceny;
-		d.MotorVehicleTheft = +d.MotorVehicleTheft;
-    });
-
-    var chart = drawLineGraph(data, 'Year', {
-		'Violent': {column: 'Violent'},
-        'Property': {column: 'Property'},
-        'Murder': {column: 'Murder'},
-        'Rape': {column: 'Rape'},
-        'Robbery': {column: 'Robbery'},
-        'Aggravated Assault': {column: 'AggravatedAssault'},
-        'Burglary': {column: 'Burglary'},
-        'Larceny': {column: 'Larceny'},
-        'Motor Vehicle Theft': {column: 'MotorVehicleTheft'}
-    }, {xAxis: 'Years', yAxis: 'Crime'});
-    chart.bind("#graphLine");
-    chart.render();
-
-});
-</script>
-
-
 
 </body>
 </html>

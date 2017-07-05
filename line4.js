@@ -1,6 +1,6 @@
 function drawLineGraph(dataset, xName, yValues, axisLables) {
     var graphBox = {};
-    var color = d3.scale.category10();
+    var color = d3.scaleOrdinal(d3.schemeCategory10);
     graphBox.xAxisLable = axisLables.xAxis;
     graphBox.yAxisLable = axisLables.yAxis;
 
@@ -46,7 +46,7 @@ function drawLineGraph(dataset, xName, yValues, axisLables) {
     graphBox.bisectYear = d3.bisector(graphBox.xFunct).left; //< Can be overridden in definition
 
 	//Create scale functions
-    graphBox.xScale = d3.scale.linear()
+    graphBox.xScale = d3.scaleLinear()
 							.range([0, graphBox.width])
 							.domain(d3.extent(graphBox.data, graphBox.xFunct)); //< Can be overridden in definition
 
@@ -54,21 +54,19 @@ function drawLineGraph(dataset, xName, yValues, axisLables) {
     graphBox.max = function (fn) {
         return d3.max(graphBox.data, fn);
     };
-    graphBox.yScale = d3.scale.linear()
+    graphBox.yScale = d3.scaleLinear()
 						.range([graphBox.height, 0])
 						.domain([0, d3.max(graphBox.yFuncts.map(graphBox.max))]);
 
     graphBox.formatAsYear = d3.format("");
 
 	//Create axis
-    graphBox.xAxis = d3.svg.axis()
+    graphBox.xAxis = d3.axisBottom()
 						.scale(graphBox.xScale)
-						.orient("bottom")
 						.tickFormat(graphBox.xFormatter); //< Can be overridden in definition
 
-    graphBox.yAxis = d3.svg.axis()
+    graphBox.yAxis = d3.axisLeft()
 							.scale(graphBox.yScale)
-							.orient("left")
 							.tickFormat(graphBox.yFormatter); //< Can be overridden in definition
 
 
