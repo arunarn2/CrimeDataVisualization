@@ -632,9 +632,10 @@ function loadButtons(error, results) {
 </script>
 <br><br>
 <h3 align="center">ARE WE SAFER NOW? </h3>
-<h4 align="justify">Overall Decreasing Crime Rates Across the Country 
-<li>Property crime has declined significantly over the 2 decades</li>
-<li>Larceny also shows a decreasing trend</li>
+<h4 align="justify">Overall Decreasing Crime Rates Across the Country <br>
+<br><li>Property crime has declined significantly over the 2 decades</li><br>
+<li>Larceny also shows a decreasing trend</li><br>
+<li>Marginal decrease in other crimes</li>
 </h4>
 <div class="graphWrapper" id="graphLine"></div>
 <script src="line4.js" charset="utf-8"></script>
