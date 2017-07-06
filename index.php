@@ -228,7 +228,7 @@ var lowColor = '#deebf7';
 var highColor = '#08306b';
 var w = 100, h = 240;
 var selectedYear = 1994;
-var headline = "Crime Data in the US ";
+var headline = "CRIME IN AMERICA 1994-2014:  ";
 
 d3.select("#main")
 		.insert("h4", ":first-child")
