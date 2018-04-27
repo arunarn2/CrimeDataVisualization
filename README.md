@@ -1,4 +1,4 @@
-# CrimeDataVisualization
+# US Crime Data Visualization using D3
 
 Accessible on https://crimedatavisualization.herokuapp.com/  
 
