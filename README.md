@@ -1,4 +1,4 @@
-"# CrimeDataVisualization" 
+# CrimeDataVisualization
 
 Accessible on https://crimedatavisualization.herokuapp.com/  
 
